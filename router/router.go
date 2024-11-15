@@ -16,7 +16,7 @@ func SetUprouter() *gin.Engine {
 			"msg":settings.Conf.APP.Port,
 		})
 	})
-	v1 := r.Group("v1/api")
+	v1 := r.Group("api/v1")
 
 	{
 		v1.GET("/")
