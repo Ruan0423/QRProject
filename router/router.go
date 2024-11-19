@@ -1,6 +1,7 @@
 package router
 
 import (
+	"web_framework/controller"
 	"web_framework/logger"
 	"web_framework/settings"
 
@@ -19,7 +20,7 @@ func SetUprouter() *gin.Engine {
 	v1 := r.Group("api/v1")
 
 	{
-		v1.GET("/")
+		v1.GET("/getsignqr", controller.QrSignHandler)
 	}
 	return r
 }
