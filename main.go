@@ -41,6 +41,7 @@ func main() {
 
 	//4. Redis初始化
 	if err := redis.Init(settings.Conf.Redisconfig); err != nil {
+		zap.L().Error("初始化redis失败！",zap.Error(err))
 		fmt.Println("error: ", err)
 		return
 	}

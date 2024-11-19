@@ -4,6 +4,7 @@ import (
 	"web_framework/logic"
 
 	"github.com/gin-gonic/gin"
+
 )
 
 func QrSignHandler(c *gin.Context) {
@@ -13,7 +14,23 @@ func QrSignHandler(c *gin.Context) {
 		c.JSON(10005, err)
 		return
 	}
+
 	c.JSON(200, gin.H{
-		"qrCodeUrl": qr_url,
+		"qrCodeUrl": "/"+qr_url,
 	})
+}
+
+//DosignHandler 验证扫码的签到
+func DosignHandler(c *gin.Context) {
+	// 获取参数
+	token:=c.Param("token")
+	// 验证token是否存在
+	if err:=logic.VerifyToken(token);err!=nil {
+		c.JSON(502,gin.H{
+			"msg": err.Error(),
+		})
+	}else {
+		c.JSON(200,gin.H{"msg":"签到成功"})
+	}
+
 }

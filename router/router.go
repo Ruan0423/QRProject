@@ -22,6 +22,7 @@ func SetUprouter() *gin.Engine {
 	{
 
 		v1.GET("/getsignqr", controller.QrSignHandler)
+		v1.GET("/qr/:token", controller.DosignHandler)
 	}
 	return r
 }
