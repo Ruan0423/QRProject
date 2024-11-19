@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Example</title>
+</head>
+<body>
+    <h1>QR Code Example</h1>
+    <img id="qrcode-img" src="" alt="QR Code" style="max-width: 100%; height: auto;">
+    
+    <script>
+        const getQRCode = async () => {
+            const response = await fetch('/api/v1/getsignqr');
+            if (!response.ok) {
+                console.error('Failed to fetch QR code:', response.statusText);
+                return;
+            }
+            const data = await response.json();
+            console.log(data)
+            document.getElementById('qrcode-img').src = data.qrCodeUrl;  // 更新二维码图像
+        };
+
+        setInterval(getQRCode, 10000);  // 每10秒更新一次二维码
+        getQRCode();  // 初始加载时也获取一次二维码
+    </script>
+</body>
+</html>
