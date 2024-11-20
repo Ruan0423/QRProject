@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Display</title>
+</head>
+<body>
+    <h1>QR Code</h1>
+    <!-- 用于显示二维码的 img 标签 -->
+    <img id="qrCode" alt="QR Code" style="max-width: 256px;">
+
+    <script>
+        // 定义二维码的更新函数
+        function updateQRCode() {
+            fetch("http://localhost:8080/api/v1/getQRCodebyte")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.data) {
+                        // 更新 img 的 src 属性为新的 Base64 二维码数据
+                        document.getElementById('qrCode').src = `data:image/png;base64,${data.data}`;
+                    } else {
+                        console.error("Failed to load QR code");
+                    }
+                })
+                .catch(error => console.error("Error fetching QR code:", error));
+        }
+
+        // 初次加载二维码
+        updateQRCode();
+
+        // 可选：定期更新二维码（例如每30秒）
+        setInterval(updateQRCode, 3000); // 每30秒更新一次
+    </script>
+</body>
+</html>

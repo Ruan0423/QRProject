@@ -14,6 +14,19 @@ import (
 	"go.uber.org/zap"
 )
 
+func Generate_Qr_By_byte() ([]byte, error) {
+	//1. 生成二维码token
+	token, err := generate_token()
+	if err != nil {
+		return nil, err
+	}
+	//2.使用redis存储token
+	err = redis.QRsign(token)
+	//3.使用qrcode的encoding方法
+	return qrcode.Encode("http://127.0.0.1:8080/api/v1/qr/"+token, qrcode.Medium, 256)
+
+}
+
 func Generate_Qr() (sign_url string, err error) {
 	//1. 生成二维码token
 	token, err := generate_token()
@@ -54,13 +67,13 @@ func generateQr_url(token string) (string, error) {
 	//生成内容
 	Qr_content := "http://127.0.0.1:8080/api/v1/qr/" + token
 
-	fmt.Println("签到：",Qr_content)
+	fmt.Println("签到：", Qr_content)
 	//二维码保存位置
 	qr_root := "static/qrcodes/"
 	qr_file_path := qr_root + token + ".png"
 
-	defer delfile(qr_root,qr_file_path)
-    // 创建二维码并保存
+	defer delfile(qr_root, qr_file_path)
+	// 创建二维码并保存
 	err := qrcode.WriteFile(Qr_content, qrcode.Medium, 256, qr_file_path)
 	if err != nil {
 		zap.L().Error("创建二维码失败！", zap.Error(err))
@@ -72,22 +85,22 @@ func generateQr_url(token string) (string, error) {
 }
 
 // delfile 删除多余的二维码
-func delfile(dir string,newqr string)  {
-	err:= filepath.Walk(dir, func(path string, info fs.FileInfo, err error) error {
-		if  err!=nil {
+func delfile(dir string, newqr string) {
+	err := filepath.Walk(dir, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
 			return err
 		}
-		if !info.IsDir(){
+		if !info.IsDir() {
 			if filepath.Clean(path) != filepath.Clean(newqr) {
-				zap.L().Info("我要删除二维码了！",zap.Any("遍历的path:",path),zap.Any("新生成的tokenqr:",newqr))
+				zap.L().Info("我要删除二维码了！", zap.Any("遍历的path:", path), zap.Any("新生成的tokenqr:", newqr))
 				return os.Remove(path)
 			}
 		}
 		return nil
 	})
 
-	if err!=nil {
-		zap.L().Error("删除二维码失败！",zap.Error(err))
+	if err != nil {
+		zap.L().Error("删除二维码失败！", zap.Error(err))
 		return
 	}
 }
